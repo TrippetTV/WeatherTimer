@@ -1,12 +1,23 @@
+import socket
 import tkinter as tk
 from tkinter import font
 import requests
 from PIL import Image, ImageTk
+import socket
+import os
+
+
 # import gi
 # gi.require_version('Gtk', '4.0')
-# rom gi.repository import Gtk
+# from gi.repository import Gtk
+
+# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# sock.bind(("0.0.0.0", 3000))
+# sock.listen(1)
+# client, addr = sock.accept()
 
 weather = tk.Tk()
+weather.title("Trippet's Weather")
 
 HEIGHT = 1080
 WIDTH = 960
@@ -40,10 +51,10 @@ def get_weather(city):
 
 
 def open_image(icon):
-    size = int(lower_frame.winfo_height()*0.25)
-    img = ImageTk.PhotoImage(Image.open('./img/'+icon+'.png').resize((size, size)))
+    size = int(lower_frame.winfo_height() * 0.25)
+    img = ImageTk.PhotoImage(Image.open('./img/' + icon + '.png').resize((size, size)))
     weather_icon.delete("all")
-    weather_icon.create_image(0,0, anchor='nw', image=img)
+    weather_icon.create_image(0, 0, anchor='nw', image=img)
     weather_icon.image = img
 
 
