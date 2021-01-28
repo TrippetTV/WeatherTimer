@@ -1,6 +1,20 @@
 import tkinter as tk
 from tkinter import font
-import requests
+import socket
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    sock.connect((socket.gethostname(), 3000))
+except:
+    print("Couldn't Connect")
+
+HEADERSIZE = 10
+
+# temp = sock.recv(64)
+# print(temp.decode("utf-8")
+
+request = ""  # TODO add the date in a nice format
+request = f"{len(request):<{HEADERSIZE}}" + request
 
 timer = tk.Tk()
 timer.title("Trippet's Timer")
@@ -14,6 +28,5 @@ canvas = tk.Canvas(timer, height=HEIGHT, width=WIDTH)
 
 frame = tk.Frame(timer, bg="#80c1ff", bd=5)
 frame.place(relx=0.5, rely=0.1, relwidth=0.75, relheight=0.75, anchor="n")
-
 
 timer.mainloop()

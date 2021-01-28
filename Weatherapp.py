@@ -1,27 +1,20 @@
-import socket
 import tkinter as tk
 from tkinter import font
 
 import requests
 from PIL import Image, ImageTk
+
 import socket
 import os
 
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-
-
-
+# from kivy.app import App
+# from kivy.uix.label import Label
+# from kivy.uix.button import Button
 
 # import gi
 # gi.require_version('Gtk', '4.0')
 # from gi.repository import Gtk
 
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# sock.bind(("0.0.0.0", 3000))
-# sock.listen(1)
-# client, addr = sock.accept()
 
 weather = tk.Tk()
 weather.title("Trippet's Weather")
@@ -90,7 +83,27 @@ weather_icon.place(relx=.75, rely=0, relwidth=1, relheight=0.5)
 
 weather.mainloop()
 
+HEADERSIZE = 10
 
-class FirstKivy(App):
-    def build(self):
-        return Label(text="Hello Kivy!")
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind((socket.gethostname(), 3000))
+sock.listen(1)
+client, addr = sock.accept()
+
+# clientsocket.send(bytes("", "utf-8"))
+
+while True:
+    request = ""
+    new_request = True
+    while True:
+        request = sock.recv(16)
+        if new_request:
+            print(f"new message length{request[:HEADERSIZE]}")
+        reqlen = int(request[:HEADERSIZE])
+        new_request = False
+
+    request += request.decode("utf-8")
+
+    if len(request) - HEADERSIZE == msglen:
+        print(f"Full Message Recieved{request}")
+        get_weather()
