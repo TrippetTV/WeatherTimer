@@ -1,10 +1,17 @@
 import socket
 import tkinter as tk
 from tkinter import font
+
 import requests
 from PIL import Image, ImageTk
 import socket
 import os
+
+from kivy.app import App
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+
+
 
 
 # import gi
@@ -58,7 +65,7 @@ def open_image(icon):
     weather_icon.image = img
 
 
-bg_color = 'white'
+bg_color = "white"
 
 canvas = tk.Canvas(weather, height=HEIGHT, width=WIDTH)
 canvas.pack()
@@ -82,3 +89,8 @@ weather_icon = tk.Canvas(label, bg=bg_color, bd=0, highlightthickness=0)
 weather_icon.place(relx=.75, rely=0, relwidth=1, relheight=0.5)
 
 weather.mainloop()
+
+
+class FirstKivy(App):
+    def build(self):
+        return Label(text="Hello Kivy!")
