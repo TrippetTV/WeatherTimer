@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import os
+from PIL import Image, ImageTk
 
 
 process1 = subprocess.Popen(["python", "Weatherapp.py"])  # Create and launch process Weatherapp.py using python interpreter
