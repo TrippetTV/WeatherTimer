@@ -1,12 +1,5 @@
 import tkinter as tk
 from tkinter import font
-import socket
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-try:
-    sock.connect((socket.gethostname(), 3000))
-except:
-    print("Couldn't Connect")
 
 HEADERSIZE = 10
 
