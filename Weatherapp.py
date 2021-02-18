@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import *
 from tkinter import ttk
 from tkinter import font
 import threading
@@ -29,13 +29,17 @@ timer_t = threading.Thread(target=timer()).start()
 # from gi.repository import Gtk
 
 
-weather = tk.Tk()
+weather = Tk()
 weather.title("Trippet's Weather")
+
+Grid.rowconfigure(weather, 0, weight=1)
+Grid.columnconfigure(weather, 0, weight=1)
 
 HEIGHT = 1080
 WIDTH = 960
 
 
+# Formats current forecast to make it more readable
 def format_response(weather_json):
     try:
         city = weather_json["name"]
@@ -48,6 +52,7 @@ def format_response(weather_json):
     return final_str
 
 
+# Formats the future forecast to make it more readable
 def format_forecast(weather_json):
     final_str = "Weather forecast for: " + weather_json["city"]["name"] + " is\n"
 
@@ -66,10 +71,11 @@ def format_forecast(weather_json):
 # api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
 
 def get_weather(city):
+    # Shows lower frame and makes top frame smaller
     lower_frame.place(relx=0.5, rely=0.25, relwidth=0.75, relheight=0.6, anchor="n")
     frame.place_forget()
     frame.place(relx=0.5, rely=0.1, relwidth=0.75, relheight=0.1, anchor="n")
-
+    # API CALL
     try:
         weather_key = "2e2538867f008716b765cecaa05c33cb"
         url = "https://api.openweathermap.org/data/2.5/weather"
@@ -86,10 +92,11 @@ def get_weather(city):
 
 
 def get_forecast(city):
+    # Shows lower frame and makes top frame smaller
     lower_frame.place(relx=0.5, rely=0.25, relwidth=0.75, relheight=0.6, anchor="n")
     frame.place_forget()
     frame.place(relx=0.5, rely=0.1, relwidth=0.75, relheight=0.1, anchor="n")
-
+    # API CALL
     try:
         weather_key = "2e2538867f008716b765cecaa05c33cb"
         url = "https://api.openweathermap.org/data/2.5/forecast"
@@ -110,52 +117,85 @@ def open_image(icon):
     weather_icon.image = img
 
 
+def quick_alarm():
+    # Hide label to show gridframe
+    label.place_forget()
+    gridframe = Frame(lower_frame)
+    gridframe.pack(fill="both", expand="true")
+
+    for i in range(2):
+        Grid.rowconfigure(gridframe, i, weight=3)
+        for j in range(3):
+            Grid.columnconfigure(gridframe, j, weight=2)
+            # Top left
+            if i == 0 and j == 0:
+                Button(gridframe, text="60 Min", font=("Courier", 10)).grid(row=i, column=j, sticky=NSEW)
+            # Top middle
+            if i == 0 and j == 1:
+                Button(gridframe, text="30 Min", font=("Courier", 10)).grid(row=i, column=j, sticky=NSEW)
+            # Top right
+            if i == 0 and j == 2:
+                Button(gridframe, text="15 Min", font=("Courier", 10)).grid(row=i, column=j, sticky=NSEW)
+            # Bottom left
+            if i == 1 and j == 0:
+                Button(gridframe, text="10 Min", font=("Courier", 10)).grid(row=i, column=j, sticky=NSEW)
+            # Bottom middle
+            if i == 1 and j == 1:
+                Button(gridframe, text="5 Min", font=("Courier", 10)).grid(row=i, column=j, sticky=NSEW)
+            # Bottom right
+            if i == 1 and j == 2:
+                Button(gridframe, text="1 Min", font=("Courier", 10)).grid(row=i, column=j, sticky=NSEW)
+
+
+# Just because
 bg_color = "white"
-
-canvas = tk.Canvas(weather, height=HEIGHT, width=WIDTH)
+# The whole intended screen
+canvas = Canvas(weather, height=HEIGHT, width=WIDTH)
 canvas.pack()
-
-frame = tk.Frame(weather, bg="#80c1ff", bd=5)
+# The top frame
+frame = Frame(weather, bg="#80c1ff", bd=5)
 frame.place(relx=0.5, rely=0.1, relwidth=0.74, relheight=0.15, anchor="n")
-
-textbox = tk.Entry(frame, font=("Courier", 12))
-textbox.insert(0, "City Name")
+# Where you shall input city
+textbox = Entry(frame, font=("Courier", 12))
 textbox.bind("<FocusIn>", lambda args: textbox.delete(0, "end"))
-textbox.bind("<FocusOut>", lambda args: textbox.delete(0, "end"), textbox.insert(0, "City Name"))
+textbox.bind("<<FocusOut>>", lambda args: textbox.delete(0, "end"), textbox.insert(0, "City Name"))
 textbox.place(relwidth=1, relheight=.5)
-
-button1 = tk.Button(frame, text="Current Forecast", font=("Courier", 10), command=lambda: get_weather(textbox.get()))
+# Button to get current forecast
+button1 = Button(frame, text="Current Forecast", font=("Courier", 10), command=lambda: get_weather(textbox.get()))
 button1.place(relx=0, rely=.5, relwidth=0.5, relheight=0.5, anchor="nw")
-
-button1 = tk.Button(frame, text="Future Forecast", font=("Courier", 10), command=lambda: get_forecast(textbox.get()))
+# Button to get the future forecasts 3 hours at a time
+button1 = Button(frame, text="Future Forecast", font=("Courier", 10), command=lambda: get_forecast(textbox.get()))
 button1.place(relx=0.5, rely=.5, relwidth=0.5, relheight=0.5, anchor="nw")
-
-lower_frame = tk.Frame(weather, bg="#80c1ff", bd=10)
+# The big lower frame initially hidden
+lower_frame = Frame(weather, bg="#80c1ff", bd=10)
 lower_frame.place_forget()
-
-scrollbar = tk.Scrollbar(lower_frame, orient="vertical")
-scrollbar.pack(side="right", fill="y")
-
-label = tk.Label(lower_frame, font=("Courier", 12), anchor="nw", justify="left", bd=4, bg=bg_color)
+# Scrollbar for when text is too long to fit in one screen
+scrollbar = Scrollbar(lower_frame, orient="vertical")
+scrollbar.place(relx=0.98, relheight=1)
+# Where the weather will be shown
+label = Label(lower_frame, font=("Courier", 12), anchor="nw", justify="left", bd=4, bg=bg_color)
 label.place(relwidth=1, relheight=1)
-
-weather_icon = tk.Canvas(label, bg=bg_color, bd=0, highlightthickness=0)
+# top right of lower_frame
+weather_icon = Canvas(label, bg=bg_color, bd=0, highlightthickness=0)
 weather_icon.place(relx=.75, rely=0, relwidth=1, relheight=0.5)
-
-tiny_frame = tk.Frame(label, bg=bg_color, bd=2)
+# The frame in the bottom left of lower_frame
+tiny_frame = Frame(label, bg=bg_color, bd=2)
 tiny_frame.place(relx=.75, rely=0.75, relwidth=.25, relheight=.25)
+# Button to show the grid of buttons for quick alarm
+button2 = Button(tiny_frame, text="Quick Alarm", command=lambda: quick_alarm())
+button2.place(relwidth=1, relheight=1)
 
 # when = tk.StringVar
 # timerbutton = ttk.Combobox(canvas, text="Prepare Forecast", font=("Courier", 12), textvariable=when)
 # timerbutton["values"] = ("Forecast in 1 hour",
-#                          "Forecast in 2 hours",
+#                          "Forecast in 2 hours"
 #                          "Forecast in 4 hours",
 #                          "Forecast in 6 hours",
 #                          "Forecast in 10 hours",
 #                          "Forecast in 12 hours",
 #                          "Forecast in 24 hours")
 #
-# # timerbutton.bind("<<ComboboxSelected>>", get_weather(textbox.get()))
+# timerbutton.bind("<<ComboboxSelected>>", get_weather(textbox.get()))
 # timerbutton.place(relx=0.75, rely=.15, relwidth=.2, relheight=0.05, anchor="n")
 
 print(font.families())
